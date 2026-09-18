@@ -17,29 +17,34 @@ export function Temoignages() {
     let base = 0, extra = 0, vel = 0, skew = 0;
     const skewTo = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'out-quart' });
 
-    const st = ScrollTrigger.create({
-      trigger: ref.current, start: 'top top', end: mobile ? '+=80%' : '+=150%', pin: true, scrub: true, anticipatePin: 1,
-      onUpdate: (self) => {
-        base = self.progress * half() * 1.2;
-        vel = self.getVelocity();
-      },
-    });
     const tick = () => {
       extra += vel * 0.00012;          // la vélocité de scroll ajoute de l'élan
       vel *= 0.92;
       extra += 0.35;                   // dérive lente pour rester vivant à l'arrêt
       const x = wrap(-(base + extra));
       gsap.set(track, { x });
-      skew = gsap.utils.clamp(-6, 6, -vel * 0.004);
-      skewTo(skew);
+      if (!mobile) { skew = gsap.utils.clamp(-6, 6, -vel * 0.004); skewTo(skew); }
     };
-    gsap.ticker.add(tick);
+    // Sur mobile : pas d'épinglage (le scroll natif reste maître), la piste avance
+    // simplement avec la traversée de la section. Sur desktop : épinglage court.
+    const st = ScrollTrigger.create({
+      trigger: ref.current,
+      start: mobile ? 'top bottom' : 'top top',
+      end: mobile ? 'bottom top' : '+=150%',
+      pin: !mobile, scrub: true, anticipatePin: mobile ? 0 : 1,
+      onUpdate: (self) => {
+        base = self.progress * half() * (mobile ? 0.9 : 1.2);
+        vel = self.getVelocity();
+      },
+      // le ticker ne tourne que lorsque la section est à l'écran
+      onToggle: (self) => { if (self.isActive) gsap.ticker.add(tick); else gsap.ticker.remove(tick); },
+    });
     return () => { gsap.ticker.remove(tick); st.kill(); };
   }, [], ref);
 
   const items = [...TEMOIGNAGES, ...TEMOIGNAGES];
   return (
-    <section ref={ref} id="temoignages" className="relative flex min-h-[70vh] flex-col justify-center overflow-hidden bg-ink py-20 text-surface md:min-h-screen" aria-labelledby="temoignages-title">
+    <section ref={ref} id="temoignages" className="relative flex flex-col justify-center overflow-hidden bg-ink py-20 text-surface md:min-h-screen" aria-labelledby="temoignages-title">
       <div className="container-grid mb-12">
         <div className="col-span-12 md:col-span-6 md:col-start-2">
           <p className="eyebrow mb-6 text-ochre">Ils en parlent</p>

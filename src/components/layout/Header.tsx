@@ -16,19 +16,27 @@ export function Header() {
   const home = pathname === '/';
 
   useEffect(() => {
+    let raf = 0;
     const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 40);
-      setHidden(y > last.current && y > 200);
-      last.current = y;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const y = window.scrollY;
+        setScrolled(y > 40);
+        // hystérésis : évite le clignotement quand la barre d'adresse mobile change la hauteur
+        if (Math.abs(y - last.current) > 12) {
+          setHidden(y > last.current && y > 200);
+          last.current = y;
+        }
+      });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, []);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-[80] transition-[transform,opacity,background-color] duration-500 [transition-timing-function:var(--ease-out-expo)] ${hidden ? '-translate-y-full' : 'translate-y-0'} ${ready ? 'opacity-100' : 'opacity-0'} ${scrolled ? 'bg-surface/85 backdrop-blur-sm' : ''}`}
+      className={`fixed inset-x-0 top-0 z-[80] transition-[transform,opacity,background-color] duration-500 [transition-timing-function:var(--ease-out-expo)] ${hidden ? '-translate-y-full' : 'translate-y-0'} ${ready ? 'opacity-100' : 'opacity-0'} ${scrolled ? 'bg-surface/95 lg:bg-surface/85 lg:backdrop-blur-sm' : ''}`}
     >
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[90] focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink">Aller au contenu</a>
       <div className="gutter flex items-center justify-between py-4 md:py-5">

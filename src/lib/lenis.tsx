@@ -11,7 +11,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
   const tickerRef = useRef<((t: number) => void) | null>(null);
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
     const instance = new Lenis({
       lerp: 0.1,
       wheelMultiplier: 1,

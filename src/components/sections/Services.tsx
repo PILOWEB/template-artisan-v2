@@ -17,16 +17,15 @@ function Sample({ s, index }: { s: Service; index: number }) {
       to={href}
       viewTransition
       data-cursor="Voir"
-      className={`sample group relative block bg-surface-deep p-3 will-change-transform [transition:translate_0.6s_var(--ease-out-expo),rotate_0.6s_var(--ease-out-expo)] hover:-translate-y-2 hover:-rotate-1 ${index % 3 === 1 ? 'lg:mt-10' : ''}`}
+      className={`sample group relative block bg-surface-deep p-3 [transition:translate_0.6s_var(--ease-out-expo),rotate_0.6s_var(--ease-out-expo)] hover:-translate-y-2 hover:-rotate-1 ${index % 3 === 1 ? 'lg:mt-10' : ''}`}
       style={{ clipPath: index % 2 ? undefined : 'polygon(0 0.5%, 99.5% 0, 100% 99.4%, 0.4% 100%)' }}
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={`/images/matiere-${s.matiere}.webp`} alt="" width={720} height={900} loading="lazy" decoding="async"
           className="h-full w-full object-cover transition-[filter,transform] duration-700 [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.04]"
-          style={{ filter: 'grayscale(0.75) sepia(0.15) contrast(0.95)' }}
         />
-        <style>{`.sample:hover img{filter:none !important}`}</style>
+        <style>{`@media (hover: hover){.sample img{filter:grayscale(0.75) sepia(0.15) contrast(0.95)}.sample:hover img{filter:none}}`}</style>
         <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/70 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         <span className="pointer-events-none absolute left-3 top-3 font-body text-sm text-surface/90 tabular-nums">{String(index + 1).padStart(2, '0')}</span>
         <span className="hand pointer-events-none absolute bottom-3 right-3 max-w-[70%] text-right text-surface opacity-0 translate-y-2 transition-[opacity,transform] duration-500 [transition-timing-function:var(--ease-out-expo)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:delay-100">

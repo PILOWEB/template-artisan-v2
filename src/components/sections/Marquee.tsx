@@ -27,7 +27,7 @@ export function Marquee() {
   }, [], ref);
 
   return (
-    <div ref={ref} className="torn-alt relative -mt-px overflow-hidden bg-surface-deep py-5" aria-label="Certifications et zones desservies">
+    <div ref={ref} className="relative -mt-px md:torn-alt overflow-hidden bg-surface-deep py-5" aria-label="Certifications et zones desservies">
       <div className="track flex w-max whitespace-nowrap will-change-transform">
         {[0, 1].map((k) => (
           <ul key={k} className="flex items-center" aria-hidden={k === 1}>

@@ -71,7 +71,7 @@ export function SplitReveal({ as: Tag = 'h2', lines, className = '', trigger = '
     <span key={li} className="block">
       {line.map((w, wi) => (
         <span key={wi} className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]">
-          <span className={`w inline-block will-change-transform ${w.italic ? 'accent-word' : ''}`}>{w.text}</span>
+          <span className={`w inline-block ${w.italic ? 'accent-word' : ''}`}>{w.text}</span>
           {w.space ? '\u00A0' : ''}
         </span>
       ))}

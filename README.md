@@ -57,8 +57,14 @@ src/
 
 - `prefers-reduced-motion` : toutes les timelines sont coupées via `gsap.matchMedia`,
   Lenis est désactivé, le contenu reste intégralement lisible.
-- Sous 768 px, la scène 3D est remplacée par `hero-static.webp` ; Three.js n'est
-  jamais téléchargé sur mobile (import dynamique).
+- Sous 768 px, la scène 3D est remplacée par `hero-static.webp` ; le paquet Three.js
+  (≈ 235 ko gzip) n'est jamais téléchargé sur mobile (import dynamique, découpage
+  `codeSplitting` dans `vite.config.ts`).
+- Sur tactile : pas de Lenis (scroll natif), pas d'épinglage des témoignages, grain
+  sans mode de fusion ni animation, aucun `backdrop-filter`, révélation avant/après
+  par transformations composées (aucun repaint pendant le geste), tickers GSAP actifs
+  uniquement quand la section est à l'écran, `ignoreMobileResize` pour la barre
+  d'adresse.
 - Curseur custom désactivé sur écrans tactiles.
 - Lien d'évitement, focus visibles, slider avant/après pilotable au clavier,
   formulaire avec `aria-invalid` / `aria-describedby`.

@@ -106,23 +106,26 @@ export function BeforeAfter({ avant, apres, alt, width, height, className = '', 
       data-cursor="Glisser"
     >
       <img src={avant} alt={`${alt}, avant travaux`} width={width} height={height} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" style={{ filter: 'saturate(0.6)' }} />
-      <div className="absolute inset-0" style={{ clipPath: 'inset(0 0 0 var(--pos))' }}>
-        <img src={apres} alt={`${alt}, après travaux`} width={width} height={height} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      {/* Le "après" est un cadre translaté de --pos, dont l'image est contre-translatée :
+          deux transforms composées par le GPU, aucun repaint pendant le geste. */}
+      <div className="absolute inset-0 overflow-hidden will-change-transform" style={{ transform: 'translateX(var(--pos))' }}>
+        <img src={apres} alt={`${alt}, après travaux`} width={width} height={height} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full max-w-none object-cover will-change-transform" style={{ transform: 'translateX(calc(var(--pos) * -1))' }} />
       </div>
       <span className="pointer-events-none absolute left-4 top-4 bg-ink/80 px-2 py-1 font-body text-sm uppercase tracking-[0.14em] text-surface">Avant</span>
       <span className="pointer-events-none absolute right-4 top-4 bg-surface/85 px-2 py-1 font-body text-sm uppercase tracking-[0.14em] text-ink">Après</span>
-      <div
-        role="slider"
-        aria-label="Comparer avant et après"
-        aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pos * 100)}
-        tabIndex={0}
-        onKeyDown={onKey}
-        className="absolute top-0 bottom-0 w-px bg-surface"
-        style={{ left: 'var(--pos)' }}
-      >
-        <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-surface bg-ink/70 text-surface backdrop-blur-[2px] transition-transform duration-500 [transition-timing-function:var(--ease-out-expo)] group-hover:scale-110">
-          <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M6 1 1 5l5 4M14 1l5 4-5 4" stroke="currentColor" strokeWidth="1.25" /></svg>
-        </span>
+      <div className="pointer-events-none absolute inset-0 will-change-transform" style={{ transform: 'translateX(var(--pos))' }}>
+        <div
+          role="slider"
+          aria-label="Comparer avant et après"
+          aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pos * 100)}
+          tabIndex={0}
+          onKeyDown={onKey}
+          className="pointer-events-auto absolute top-0 bottom-0 left-0 w-px bg-surface"
+        >
+          <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-surface bg-ink/75 text-surface transition-transform duration-500 [transition-timing-function:var(--ease-out-expo)] group-hover:scale-110">
+            <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M6 1 1 5l5 4M14 1l5 4-5 4" stroke="currentColor" strokeWidth="1.25" /></svg>
+          </span>
+        </div>
       </div>
     </div>
   );

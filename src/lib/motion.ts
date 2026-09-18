@@ -18,6 +18,7 @@ export function registerEases() {
   // Accélération asymétrique : départ franc, arrivée longue
   CustomEase.create('asym', 'M0,0 C0.05,0.35 0.15,0.85 0.4,0.95 0.6,1.01 0.8,1 1,1');
   gsap.defaults({ ease: 'out-quart', duration: 0.7 });
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 export const DUR = {

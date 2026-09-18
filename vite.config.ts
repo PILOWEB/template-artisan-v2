@@ -10,12 +10,18 @@ export default defineConfig({
   },
   build: {
     target: 'es2022',
-    rollupOptions: {
+    chunkSizeWarningLimit: 1000,
+    rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/three') || id.includes('@react-three')) return 'three';
-          if (id.includes('node_modules/gsap') || id.includes('node_modules/lenis')) return 'motion';
-          return undefined;
+        // Three.js et react-three-fiber dans un paquet à part, chargé uniquement par le
+        // hero desktop. React et le routeur restent dans "vendor" : la page mobile ne
+        // télécharge jamais le paquet 3D.
+        codeSplitting: {
+          groups: [
+            { name: 'vendor', test: /node_modules[\\/](react|react-dom|scheduler|react-router|use-sync-external-store)[\\/]/, priority: 20 },
+            { name: 'motion', test: /node_modules[\\/](gsap|lenis)[\\/]/, priority: 15 },
+            { name: 'three', test: /node_modules[\\/](three|@react-three|react-reconciler|its-fine|suspend-react|zustand|react-use-measure)[\\/]/, priority: 10 },
+          ],
         },
       },
     },
