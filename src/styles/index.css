@@ -1,0 +1,265 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   TOKENS — nommés par usage. La teinte d'accent est injectée depuis
+   site.config.ts (COULEUR_ACCENT) sur :root au démarrage.
+   ============================================================================ */
+@theme {
+  --color-*: initial;
+  --color-surface: #f4efe7;
+  --color-surface-deep: #eae0d2;
+  --color-ink: #241c15;
+  --color-ink-soft: color-mix(in oklab, #241c15 68%, transparent);
+  --color-ink-mute: color-mix(in oklab, #241c15 46%, transparent);
+  --color-accent: var(--accent, #b4522e);
+  --color-accent-ink: #ffffff;
+  --color-ochre: #8a6a2f;
+  --color-olive: #4e5a3c;
+  --color-line: color-mix(in oklab, #8a6a2f 35%, transparent);
+  --color-line-strong: color-mix(in oklab, #8a6a2f 70%, transparent);
+
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-hand: 'Caveat', 'Segoe Print', cursive;
+
+  /* Échelle modulaire 1.333 depuis 16 px */
+  --text-sm: 0.75rem;
+  --text-sm--line-height: 1.4;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-md: 1.333rem;
+  --text-md--line-height: 1.5;
+  --text-lg: 1.777rem;
+  --text-lg--line-height: 1.2;
+  --text-xl: 2.369rem;
+  --text-xl--line-height: 1.1;
+  --text-2xl: 3.157rem;
+  --text-2xl--line-height: 1.02;
+  --text-3xl: 4.209rem;
+  --text-3xl--line-height: 0.98;
+  --text-4xl: clamp(3.157rem, 1rem + 7.4vw, 7.5rem);
+  --text-4xl--line-height: 0.92;
+
+  /* Espacement base 8 px */
+  --spacing: 0.5rem;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
+
+:root {
+  --gutter: clamp(16px, 5vw, 96px);
+  --col-gap: 24px;
+  color-scheme: light;
+}
+
+/* ============================================================================
+   BASE
+   ============================================================================ */
+@layer base {
+  html {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: auto;
+  }
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 30, 'WONK' 1;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    text-wrap: balance;
+  }
+  em, .accent-word {
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+    color: var(--color-accent);
+  }
+  p {
+    text-wrap: pretty;
+    max-width: 62ch;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  img { display: block; max-width: 100%; height: auto; }
+}
+
+/* ============================================================================
+   COMPOSANTS UTILITAIRES
+   ============================================================================ */
+@utility container-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  padding-inline: var(--gutter);
+  width: 100%;
+}
+@utility gutter {
+  padding-inline: var(--gutter);
+}
+
+/* Surtitre : petit, espacé, avec un tiret ocre */
+@utility eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ochre);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  &::before {
+    content: '';
+    width: 2rem;
+    height: 1px;
+    background: currentColor;
+  }
+}
+
+/* Bloc à bords irréguliers (pas de carte blanche uniforme) */
+@utility torn {
+  clip-path: polygon(
+    0.6% 0.9%, 24% 0%, 51% 0.7%, 77% 0.2%, 99.4% 0.8%,
+    100% 26%, 99.3% 52%, 100% 78%, 99.5% 99.2%,
+    76% 100%, 50% 99.4%, 25% 100%, 0.4% 99.3%,
+    0% 75%, 0.7% 50%, 0% 24%
+  );
+}
+@utility torn-alt {
+  clip-path: polygon(
+    0% 0.4%, 22% 0.9%, 48% 0%, 74% 0.8%, 100% 0.3%,
+    99.4% 23%, 100% 49%, 99.2% 74%, 100% 100%,
+    75% 99.3%, 51% 100%, 26% 99.2%, 0.5% 100%,
+    0.9% 77%, 0% 51%, 0.6% 25%
+  );
+}
+
+/* Souligné qui se dessine au survol */
+@utility link-draw {
+  position: relative;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-out-expo);
+  padding-bottom: 2px;
+  &:hover, &:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* Filet ocre fin */
+@utility rule {
+  height: 1px;
+  background: var(--color-line);
+}
+@utility rule-v {
+  width: 1px;
+  background: var(--color-line);
+}
+
+/* Texte manuscrit */
+@utility hand {
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-ochre);
+  letter-spacing: 0;
+}
+
+/* Masque de ligne pour les révélations typographiques */
+@utility line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+/* Grain papier : overlay fixe, multiplié, 5 % */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 60;
+  opacity: 0.055;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.11 0 0 0 0 0.08 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  animation: grain-shift 8s steps(6) infinite;
+}
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -4%); }
+  60% { transform: translate(-4%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Curseur custom : masqué sur tactile, et seulement si JS l'active */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button,
+html.has-cursor [data-cursor] {
+  cursor: none;
+}
+
+/* View transitions : le titre voyage entre les pages */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.55s;
+  animation-timing-function: var(--ease-in-out-quart);
+}
+::view-transition-group(*) {
+  animation-duration: 0.65s;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+/* Barre d'appel mobile : espace réservé en bas de page */
+@media (max-width: 63.99rem) {
+  body { padding-bottom: 4.5rem; }
+}
